@@ -1,0 +1,58 @@
+\documentclass[a4paper]{article}
+\usepackage[indentfirst=false,BoldFont,SlantFont]{xeCJK}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{courier}
+\usepackage{pdfpages}
+
+\setCJKfamilyfont{hei}{SimHei}
+\setCJKfamilyfont{HEI}{SimHei}
+\newcommand{\hei}{\CJKfamily{hei}}
+\newcommand*{\myfont}{\CJKfamily{simsun}\selectfont}
+\newcommand*{\yourfont}{\fontfamily{ptm}\selectfont}
+\setCJKmainfont{SimSun}
+\setCJKsansfont{SimSun}
+\setCJKmonofont{NSimSun}
+
+\begin{document}
+\pagestyle{empty} 
+\begin{center}
+
+\LARGE ACM-ICPC
+
+\vspace*{1cm}
+
+\textsc{\Huge Standard Code Library}
+
+\vspace*{1cm}
+
+\includegraphics[height=0.45\textwidth]{favicon.pdf}
+
+\vspace*{1cm}
+{\myfont \bfseries
+\Huge Team Name
+}
+
+
+\vspace*{2cm}
+
+{\Large
+\begin{tabular}{cp{1in}c}
+\rule{0pt}{16pt} \textbf{Coach} & & \textbf{教练} \\
+\midrule
+\rule{0pt}{16pt} Coach Name & & 教练姓名 \\
+\\
+\\
+\rule{0pt}{16pt} \textbf{Contestant} & & \textbf{队员} \\
+\midrule
+\rule{0pt}{16pt} Contestant Name & & 参赛者姓名 \\
+\end{tabular}
+}
+
+\vspace*{3cm}
+
+{\large\today}
+
+\end{center}
+\end{document}

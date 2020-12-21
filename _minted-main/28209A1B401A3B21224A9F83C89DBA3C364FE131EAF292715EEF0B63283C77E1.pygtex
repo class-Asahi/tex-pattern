@@ -1,0 +1,318 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{k}{namespace} \PYG{n}{SimpleSplayTree}
+\PYG{p}{\PYGZob{}}
+    \PYG{k}{using} \PYG{n}{T} \PYG{o}{=} \PYG{k+kt}{int}\PYG{p}{;}
+
+    \PYG{k}{struct} \PYG{n+nc}{node}
+    \PYG{p}{\PYGZob{}}
+        \PYG{n}{T} \PYG{n}{key}\PYG{p}{,} \PYG{n}{est}\PYG{p}{,} \PYG{n}{sum}\PYG{p}{;}
+        \PYG{k+kt}{int} \PYG{n}{anc}\PYG{p}{,} \PYG{n}{chd}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{],} \PYG{n}{cnt}\PYG{p}{;}
+        \PYG{k+kt}{int} \PYG{n}{size}\PYG{p}{;}
+        \PYG{k+kt}{bool} \PYG{n}{rev}\PYG{p}{;}
+
+        \PYG{k+kt}{void} \PYG{n+nf}{init}\PYG{p}{(}\PYG{n}{T} \PYG{n}{K}\PYG{p}{,} \PYG{k+kt}{int} \PYG{n}{father} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n}{size} \PYG{o}{=} \PYG{n}{cnt} \PYG{o}{=} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{chd}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{=} \PYG{n}{chd}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{;}
+            \PYG{n}{key} \PYG{o}{=} \PYG{n}{est} \PYG{o}{=} \PYG{n}{sum} \PYG{o}{=} \PYG{n}{K}\PYG{p}{,} \PYG{n}{anc} \PYG{o}{=} \PYG{n}{father}\PYG{p}{;}
+            \PYG{n}{rev} \PYG{o}{=} \PYG{n+nb}{false}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+    \PYG{p}{\PYGZcb{};}
+
+    \PYG{k}{class} \PYG{n+nc}{tree}
+    \PYG{p}{\PYGZob{}}
+        \PYG{k+kt}{int} \PYG{n}{root}\PYG{p}{,} \PYG{n}{cnt}\PYG{p}{,} \PYG{n}{mem}\PYG{p}{;}
+        \PYG{n}{stack}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{n}{pool}\PYG{p}{;}
+
+        \PYG{k}{using} \PYG{n}{node\PYGZus{}t} \PYG{o}{=} \PYG{o}{::}\PYG{n}{SimpleSplayTree}\PYG{o}{::}\PYG{n}{node}\PYG{p}{;}
+        \PYG{k}{using} \PYG{n}{method\PYGZus{}t} \PYG{o}{=} \PYG{n}{function}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{void}\PYG{p}{(}\PYG{n}{node\PYGZus{}t}\PYG{o}{\PYGZam{}}\PYG{p}{)}\PYG{o}{\PYGZgt{}}\PYG{p}{;}
+        \PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{node\PYGZus{}t}\PYG{o}{\PYGZgt{}} \PYG{n}{node}\PYG{p}{;}
+
+        \PYG{k+kt}{int} \PYG{o}{\PYGZam{}}\PYG{n+nf}{lc}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)} \PYG{p}{\PYGZob{}}\PYG{k}{return} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{];\PYGZcb{}}
+        \PYG{k+kt}{int} \PYG{o}{\PYGZam{}}\PYG{n+nf}{rc}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)} \PYG{p}{\PYGZob{}}\PYG{k}{return} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{];\PYGZcb{}}
+        \PYG{k+kt}{int} \PYG{n+nf}{dir}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)} \PYG{p}{\PYGZob{}}\PYG{k}{return} \PYG{n}{node}\PYG{p}{[}\PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{anc}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{==} \PYG{n}{id}\PYG{p}{;\PYGZcb{}}
+
+        \PYG{k+kt}{int} \PYG{n+nf}{alloc}\PYG{p}{(}\PYG{n}{T} \PYG{n}{key}\PYG{p}{,} \PYG{k+kt}{int} \PYG{n}{father} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k+kt}{int} \PYG{n}{id} \PYG{o}{=} \PYG{n}{pool}\PYG{p}{.}\PYG{n}{empty}\PYG{p}{()} \PYG{o}{?} \PYG{o}{++} \PYG{n+nl}{cnt} \PYG{p}{:} \PYG{n}{pool}\PYG{p}{.}\PYG{n}{top}\PYG{p}{();}
+            \PYG{k}{if} \PYG{p}{(}\PYG{o}{!}\PYG{n}{pool}\PYG{p}{.}\PYG{n}{empty}\PYG{p}{())} \PYG{n}{pool}\PYG{p}{.}\PYG{n}{pop}\PYG{p}{();}
+            \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{init}\PYG{p}{(}\PYG{n}{key}\PYG{p}{,} \PYG{n}{father}\PYG{p}{);}
+            \PYG{k}{return} \PYG{n}{id}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{void} \PYG{n+nf}{free}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)} \PYG{p}{\PYGZob{}}\PYG{k}{if} \PYG{p}{(}\PYG{n}{id}\PYG{p}{)} \PYG{n}{pool}\PYG{p}{.}\PYG{n}{push}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);\PYGZcb{}}
+
+        \PYG{k+kt}{void} \PYG{n+nf}{update}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k}{auto} \PYG{n}{ls} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{size} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{ls}\PYG{p}{].}\PYG{n}{size} \PYG{o}{+} \PYG{n}{node}\PYG{p}{[}\PYG{n}{rs}\PYG{p}{].}\PYG{n}{size} \PYG{o}{+} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{cnt}\PYG{p}{;}
+            \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{est} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key}\PYG{p}{;}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{ls}\PYG{p}{)} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{est} \PYG{o}{=} \PYG{n}{min}\PYG{p}{(}\PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{est}\PYG{p}{,} \PYG{n}{node}\PYG{p}{[}\PYG{n}{ls}\PYG{p}{].}\PYG{n}{est}\PYG{p}{);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{rs}\PYG{p}{)} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{est} \PYG{o}{=} \PYG{n}{min}\PYG{p}{(}\PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{est}\PYG{p}{,} \PYG{n}{node}\PYG{p}{[}\PYG{n}{rs}\PYG{p}{].}\PYG{n}{est}\PYG{p}{);}
+            \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{sum} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key} \PYG{o}{*} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{cnt}\PYG{p}{;}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{ls}\PYG{p}{)} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{sum} \PYG{o}{+=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{ls}\PYG{p}{].}\PYG{n}{sum}\PYG{p}{;}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{rs}\PYG{p}{)} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{sum} \PYG{o}{+=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{rs}\PYG{p}{].}\PYG{n}{sum}\PYG{p}{;}                 
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{void} \PYG{n+nf}{rotate}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k+kt}{int} \PYG{n}{fa} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{anc}\PYG{p}{,} \PYG{n}{gfa} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{fa}\PYG{p}{].}\PYG{n}{anc}\PYG{p}{,} \PYG{n}{d} \PYG{o}{=} \PYG{n}{dir}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{gfa}\PYG{p}{)} \PYG{n}{node}\PYG{p}{[}\PYG{n}{gfa}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{n}{dir}\PYG{p}{(}\PYG{n}{fa}\PYG{p}{)]} \PYG{o}{=} \PYG{n}{id}\PYG{p}{;}
+            \PYG{n}{node}\PYG{p}{[}\PYG{n}{fa}\PYG{p}{].}\PYG{n}{anc} \PYG{o}{=} \PYG{n}{id}\PYG{p}{,} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{anc} \PYG{o}{=} \PYG{n}{gfa}\PYG{p}{;}
+            \PYG{n}{node}\PYG{p}{[}\PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{o}{!}\PYG{n}{d}\PYG{p}{]].}\PYG{n}{anc} \PYG{o}{=} \PYG{n}{fa}\PYG{p}{;}
+            \PYG{n}{node}\PYG{p}{[}\PYG{n}{fa}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{n}{d}\PYG{p}{]} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{o}{!}\PYG{n}{d}\PYG{p}{];}
+            \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{o}{!}\PYG{n}{d}\PYG{p}{]} \PYG{o}{=} \PYG{n}{fa}\PYG{p}{;}
+            \PYG{n}{update}\PYG{p}{(}\PYG{n}{fa}\PYG{p}{),} \PYG{n}{update}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{void} \PYG{n+nf}{splay}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{,} \PYG{k+kt}{int} \PYG{n}{goal} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k}{for} \PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{fa}\PYG{p}{;} \PYG{p}{(}\PYG{n}{fa} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{anc}\PYG{p}{)} \PYG{o}{!=} \PYG{n}{goal}\PYG{p}{;} \PYG{n}{rotate}\PYG{p}{(}\PYG{n}{id}\PYG{p}{))}
+                \PYG{k}{if} \PYG{p}{(}\PYG{n}{node}\PYG{p}{[}\PYG{n}{fa}\PYG{p}{].}\PYG{n}{anc} \PYG{o}{!=} \PYG{n}{goal}\PYG{p}{)} \PYG{n}{rotate}\PYG{p}{(}\PYG{n}{dir}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)} \PYG{o}{==} \PYG{n}{dir}\PYG{p}{(}\PYG{n}{fa}\PYG{p}{)} \PYG{o}{?} \PYG{n+nl}{fa} \PYG{p}{:} \PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{o}{!}\PYG{n}{goal}\PYG{p}{)} \PYG{n}{root} \PYG{o}{=} \PYG{n}{id}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+\PYG{c+cp}{\PYGZsh{}ifdef SPLAY\PYGZus{}BST\PYGZus{}MODE}
+        \PYG{k+kt}{int} \PYG{n+nf}{find}\PYG{p}{(}\PYG{n}{T} \PYG{n}{key}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k+kt}{int} \PYG{n}{id} \PYG{o}{=} \PYG{n}{root}\PYG{p}{;}
+            \PYG{k}{if} \PYG{p}{(}\PYG{o}{!}\PYG{n}{id}\PYG{p}{)} \PYG{k}{return} \PYG{l+m+mi}{0}\PYG{p}{;}
+            \PYG{k}{while} \PYG{p}{(}\PYG{n}{key} \PYG{o}{!=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key} \PYG{o}{\PYGZam{}\PYGZam{}} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{n}{key} \PYG{o}{\PYGZgt{}} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key}\PYG{p}{])}
+                \PYG{n}{id} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{n}{key} \PYG{o}{\PYGZgt{}} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key}\PYG{p}{];}
+            \PYG{k}{return} \PYG{n}{splay}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{id}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{int} \PYG{n+nf}{getNext}\PYG{p}{(}\PYG{n}{T} \PYG{n}{key}\PYG{p}{,} \PYG{k+kt}{bool} \PYG{n}{dir}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k+kt}{int} \PYG{n}{id} \PYG{o}{=} \PYG{n}{find}\PYG{p}{(}\PYG{n}{key}\PYG{p}{);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{dir} \PYG{o}{?} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key} \PYG{o}{\PYGZgt{}} \PYG{n+nl}{key} \PYG{p}{:} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key} \PYG{o}{\PYGZlt{}} \PYG{n}{key}\PYG{p}{)}
+                \PYG{k}{return} \PYG{n}{id}\PYG{p}{;}
+            \PYG{n}{id} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{n}{dir}\PYG{p}{];}
+            \PYG{k}{while} \PYG{p}{(}\PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{o}{!}\PYG{n}{dir}\PYG{p}{])} \PYG{n}{id} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{o}{!}\PYG{n}{dir}\PYG{p}{];}
+            \PYG{k}{return} \PYG{n}{id}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+\PYG{c+cp}{\PYGZsh{}endif}
+
+        \PYG{k+kt}{int} \PYG{n+nf}{lazyTag}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+\PYG{c+cp}{\PYGZsh{}ifdef SPLAY\PYGZus{}APPEND\PYGZus{}MODE}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{id} \PYG{o}{\PYGZam{}\PYGZam{}} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{rev}\PYG{p}{)}
+            \PYG{p}{\PYGZob{}}
+                \PYG{n}{swap}\PYG{p}{(}\PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{));}
+                \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{rev} \PYG{o}{=} \PYG{n+nb}{false}\PYG{p}{;}
+                \PYG{k}{auto} \PYG{n}{ls} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+                \PYG{k}{if} \PYG{p}{(}\PYG{n}{ls}\PYG{p}{)} \PYG{n}{node}\PYG{p}{[}\PYG{n}{ls}\PYG{p}{].}\PYG{n}{rev} \PYG{o}{=} \PYG{o}{!}\PYG{n}{node}\PYG{p}{[}\PYG{n}{ls}\PYG{p}{].}\PYG{n}{rev}\PYG{p}{;}
+                \PYG{k}{if} \PYG{p}{(}\PYG{n}{rs}\PYG{p}{)} \PYG{n}{node}\PYG{p}{[}\PYG{n}{rs}\PYG{p}{].}\PYG{n}{rev} \PYG{o}{=} \PYG{o}{!}\PYG{n}{node}\PYG{p}{[}\PYG{n}{rs}\PYG{p}{].}\PYG{n}{rev}\PYG{p}{;}
+            \PYG{p}{\PYGZcb{}}
+\PYG{c+cp}{\PYGZsh{}endif}
+            \PYG{k}{return} \PYG{n}{id}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{int} \PYG{n+nf}{atRank}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{rank}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{rank} \PYG{o}{\PYGZlt{}=} \PYG{l+m+mi}{0} \PYG{o}{||} \PYG{n}{rank} \PYG{o}{\PYGZgt{}} \PYG{n}{node}\PYG{p}{[}\PYG{n}{root}\PYG{p}{].}\PYG{n}{size}\PYG{p}{)} \PYG{k}{return} \PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{;}
+            \PYG{k+kt}{int} \PYG{n}{id} \PYG{o}{=} \PYG{n}{root}\PYG{p}{,} \PYG{n}{ls} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{while} \PYG{p}{(}\PYG{n}{lazyTag}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{ls} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{id}\PYG{p}{)}
+                \PYG{k}{if} \PYG{p}{(}\PYG{n}{rank} \PYG{o}{\PYGZlt{}=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{ls}\PYG{p}{].}\PYG{n}{size}\PYG{p}{)} \PYG{n}{id} \PYG{o}{=} \PYG{n}{ls}\PYG{p}{;}
+                \PYG{k}{else} \PYG{k}{if} \PYG{p}{(}\PYG{n}{rank} \PYG{o}{\PYGZlt{}=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{ls}\PYG{p}{].}\PYG{n}{size} \PYG{o}{+} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{cnt}\PYG{p}{)} \PYG{k}{break}\PYG{p}{;}
+                \PYG{k}{else} \PYG{n}{rank} \PYG{o}{\PYGZhy{}=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{ls}\PYG{p}{].}\PYG{n}{size} \PYG{o}{+} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{cnt}\PYG{p}{,} \PYG{n}{id} \PYG{o}{=} \PYG{n}{rs}\PYG{p}{;}
+            \PYG{k}{return} \PYG{n}{id}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{void} \PYG{n+nf}{toStream}\PYG{p}{(}\PYG{n}{ostream} \PYG{o}{\PYGZam{}}\PYG{n}{os}\PYG{p}{,} \PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k+kt}{int} \PYG{n}{ls} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{ls}\PYG{p}{)} \PYG{n}{os} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{l+s}{\PYGZdq{}\PYGZob{}\PYGZdq{}}\PYG{p}{,} \PYG{n}{toStream}\PYG{p}{(}\PYG{n}{os}\PYG{p}{,} \PYG{n}{ls}\PYG{p}{),} \PYG{n}{os} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{l+s}{\PYGZdq{}\PYGZcb{}\PYGZdq{}}\PYG{p}{;}
+            \PYG{n}{os} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{l+s}{\PYGZdq{} (\PYGZsh{}\PYGZdq{}} \PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{n}{id} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{l+s}{\PYGZdq{}: \PYGZdq{}} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{l+s}{\PYGZdq{}) \PYGZdq{}}\PYG{p}{;}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{rs}\PYG{p}{)} \PYG{n}{os} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{l+s}{\PYGZdq{}\PYGZob{}\PYGZdq{}}\PYG{p}{,} \PYG{n}{toStream}\PYG{p}{(}\PYG{n}{os}\PYG{p}{,} \PYG{n}{rs}\PYG{p}{),} \PYG{n}{os} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{l+s}{\PYGZdq{}\PYGZcb{}\PYGZdq{}}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{void} \PYG{n+nf}{traversal}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{,} \PYG{k}{const} \PYG{n}{method\PYGZus{}t} \PYG{o}{\PYGZam{}}\PYG{n}{process}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n}{lazyTag}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{const} \PYG{k}{auto} \PYG{n}{ls} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{ls}\PYG{p}{)} \PYG{n}{traversal}\PYG{p}{(}\PYG{n}{ls}\PYG{p}{,} \PYG{n}{process}\PYG{p}{);}
+            \PYG{n}{process}\PYG{p}{(}\PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{]);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{rs}\PYG{p}{)} \PYG{n}{traversal}\PYG{p}{(}\PYG{n}{rs}\PYG{p}{,} \PYG{n}{process}\PYG{p}{);}
+        \PYG{p}{\PYGZcb{}}
+
+    \PYG{k}{public}\PYG{o}{:}
+        \PYG{k}{explicit} \PYG{n}{tree}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{size}\PYG{p}{)} \PYG{o}{:} \PYG{n}{mem}\PYG{p}{(}\PYG{n}{size}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n}{root} \PYG{o}{=} \PYG{n}{cnt} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{;}
+            \PYG{n}{node}\PYG{p}{.}\PYG{n}{resize}\PYG{p}{(}\PYG{n}{size} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{);}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{n}{T} \PYG{n}{access}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)} \PYG{p}{\PYGZob{}}\PYG{k}{return} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key}\PYG{p}{;\PYGZcb{}}
+
+        \PYG{k+kt}{void} \PYG{n}{clear}\PYG{p}{()}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n}{root} \PYG{o}{=} \PYG{n}{cnt} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{;}
+            \PYG{k}{while} \PYG{p}{(}\PYG{o}{!}\PYG{n}{pool}\PYG{p}{.}\PYG{n}{empty}\PYG{p}{())} \PYG{n}{pool}\PYG{p}{.}\PYG{n}{pop}\PYG{p}{();}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{n}{T} \PYG{n}{at}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{rank}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{node}\PYG{p}{[}\PYG{n}{root}\PYG{p}{].}\PYG{n}{size} \PYG{o}{\PYGZlt{}} \PYG{n}{rank}\PYG{p}{)} \PYG{k}{return} \PYG{l+m+mi}{\PYGZhy{}1}\PYG{p}{;}
+            \PYG{k}{auto} \PYG{n}{id} \PYG{o}{=} \PYG{n}{atRank}\PYG{p}{(}\PYG{n}{rank}\PYG{p}{);}
+            \PYG{k}{return} \PYG{n+nf}{splay}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{int} \PYG{n}{getSize}\PYG{p}{()} \PYG{p}{\PYGZob{}}\PYG{k}{return} \PYG{n}{root} \PYG{o}{?} \PYG{n}{node}\PYG{p}{[}\PYG{n}{root}\PYG{p}{].}\PYG{n+nl}{size} \PYG{p}{:} \PYG{l+m+mi}{0}\PYG{p}{;\PYGZcb{}}
+
+        \PYG{k+kt}{void} \PYG{n}{toArray}\PYG{p}{(}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{T}\PYG{o}{\PYGZgt{}} \PYG{o}{\PYGZam{}}\PYG{n}{arr}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n}{arr}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+            \PYG{n}{traversal}\PYG{p}{(}\PYG{n}{root}\PYG{p}{,} \PYG{p}{[}\PYG{o}{\PYGZam{}}\PYG{p}{](}\PYG{n}{node\PYGZus{}t} \PYG{o}{\PYGZam{}}\PYG{n}{ii}\PYG{p}{)\PYGZob{}}\PYG{n}{arr}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(}\PYG{n}{ii}\PYG{p}{.}\PYG{n}{key}\PYG{p}{);\PYGZcb{});}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{c+cm}{/**}
+\PYG{c+cm}{         * BST 模式：}
+\PYG{c+cm}{         * }
+\PYG{c+cm}{         * 树始终维持了 BST 的性质，可以使用二分法在树上查找；}
+\PYG{c+cm}{         * erase 方法已经换成不要求哨兵节点的版本了；}
+\PYG{c+cm}{         * 对于每一个节点，使用 cnt 域维护该值的出现次数；}
+\PYG{c+cm}{         */}
+\PYG{c+cp}{\PYGZsh{}ifdef SPLAY\PYGZus{}BST\PYGZus{}MODE}
+        \PYG{k+kt}{void} \PYG{n}{insert}\PYG{p}{(}\PYG{n}{T} \PYG{n}{key}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k}{if} \PYG{p}{(}\PYG{o}{!}\PYG{n}{root}\PYG{p}{)}
+            \PYG{p}{\PYGZob{}}
+                \PYG{n}{root} \PYG{o}{=} \PYG{n}{alloc}\PYG{p}{(}\PYG{n}{key}\PYG{p}{);}
+                \PYG{k}{return}\PYG{p}{;}
+            \PYG{p}{\PYGZcb{}}
+            \PYG{k+kt}{int} \PYG{n}{id} \PYG{o}{=} \PYG{n}{root}\PYG{p}{,} \PYG{n}{fa} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{;}
+            \PYG{k}{while} \PYG{p}{(}\PYG{n}{id} \PYG{o}{\PYGZam{}\PYGZam{}} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key} \PYG{o}{!=} \PYG{n}{key}\PYG{p}{)}
+            \PYG{p}{\PYGZob{}}
+                \PYG{n}{fa} \PYG{o}{=} \PYG{n}{id}\PYG{p}{;}
+                \PYG{n}{id} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{n}{key} \PYG{o}{\PYGZgt{}} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key}\PYG{p}{];}
+            \PYG{p}{\PYGZcb{}}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{id}\PYG{p}{)} \PYG{k}{return} \PYG{o}{++} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{cnt}\PYG{p}{,} \PYG{n}{splay}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{n}{id} \PYG{o}{=} \PYG{n}{alloc}\PYG{p}{(}\PYG{n}{key}\PYG{p}{,} \PYG{n}{fa}\PYG{p}{);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{fa}\PYG{p}{)} \PYG{n}{node}\PYG{p}{[}\PYG{n}{fa}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{n}{key} \PYG{o}{\PYGZgt{}} \PYG{n}{node}\PYG{p}{[}\PYG{n}{fa}\PYG{p}{].}\PYG{n}{key}\PYG{p}{]} \PYG{o}{=} \PYG{n}{id}\PYG{p}{;}  \PYG{c+c1}{// 无需特判 fa 是否为根}
+            \PYG{k}{return} \PYG{n+nf}{splay}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{void} \PYG{n}{erase}\PYG{p}{(}\PYG{n}{T} \PYG{n}{key}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k+kt}{int} \PYG{n}{id} \PYG{o}{=} \PYG{n}{find}\PYG{p}{(}\PYG{n}{key}\PYG{p}{),} \PYG{n}{ex}\PYG{p}{;}
+            \PYG{k}{if} \PYG{p}{(}\PYG{o}{!}\PYG{n}{id} \PYG{o}{||} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key} \PYG{o}{!=} \PYG{n}{key}\PYG{p}{)} \PYG{k}{return}\PYG{p}{;}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{cnt} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{1}\PYG{p}{)}
+                \PYG{k}{return} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{cnt}\PYG{p}{,} \PYG{n}{update}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{auto} \PYG{n}{ls} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{o}{!}\PYG{n}{ls} \PYG{o}{||} \PYG{o}{!}\PYG{n}{rs}\PYG{p}{)}
+            \PYG{p}{\PYGZob{}}
+                \PYG{n}{root} \PYG{o}{=} \PYG{n}{ls} \PYG{o}{|} \PYG{n}{rs}\PYG{p}{;}
+                \PYG{k}{if} \PYG{p}{(}\PYG{n}{root}\PYG{p}{)} \PYG{n}{node}\PYG{p}{[}\PYG{n}{root}\PYG{p}{].}\PYG{n}{anc} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{;}
+                \PYG{k}{return} \PYG{n+nf}{free}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{p}{\PYGZcb{}}
+            \PYG{n}{id} \PYG{o}{=} \PYG{n}{ls}\PYG{p}{,} \PYG{n}{ex} \PYG{o}{=} \PYG{n}{root}\PYG{p}{,} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{while} \PYG{p}{(}\PYG{n}{rs}\PYG{p}{)} \PYG{n}{id} \PYG{o}{=} \PYG{n}{rs}\PYG{p}{,} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{n}{splay}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{anc} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{ex}\PYG{p}{);}
+            \PYG{n}{node}\PYG{p}{[}\PYG{n}{rs}\PYG{p}{].}\PYG{n}{anc} \PYG{o}{=} \PYG{n}{id}\PYG{p}{,} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)} \PYG{o}{=} \PYG{n}{rs}\PYG{p}{;}
+            \PYG{k}{return} \PYG{n+nf}{free}\PYG{p}{(}\PYG{n}{ex}\PYG{p}{),} \PYG{n}{update}\PYG{p}{(}\PYG{n}{root}\PYG{p}{);}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{int} \PYG{n}{getOrder}\PYG{p}{(}\PYG{n}{T} \PYG{n}{key}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k+kt}{int} \PYG{n}{id} \PYG{o}{=} \PYG{n}{find}\PYG{p}{(}\PYG{n}{key}\PYG{p}{);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{o}{!}\PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{))} \PYG{k}{return} \PYG{l+m+mi}{1}\PYG{p}{;}
+            \PYG{k}{return} \PYG{n}{node}\PYG{p}{[}\PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)].}\PYG{n}{size} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{n}{T} \PYG{n}{getPrecursor}\PYG{p}{(}\PYG{n}{T} \PYG{n}{key}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k}{auto} \PYG{n}{id} \PYG{o}{=} \PYG{n}{getNext}\PYG{p}{(}\PYG{n}{key}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{);}
+            \PYG{k}{return} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{n}{T} \PYG{n}{getSucceed}\PYG{p}{(}\PYG{n}{T} \PYG{n}{key}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k}{auto} \PYG{n}{id} \PYG{o}{=} \PYG{n}{getNext}\PYG{p}{(}\PYG{n}{key}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{);}
+            \PYG{k}{return} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+\PYG{c+cp}{\PYGZsh{}endif}
+
+        \PYG{c+cm}{/**}
+\PYG{c+cm}{         * APPEND 模式：}
+\PYG{c+cm}{         *}
+\PYG{c+cm}{         * 指不适用 BST 性质，仅将树的中序遍历作为数组序列的用法；}
+\PYG{c+cm}{         * 因此，不能使用 find 方法查找特定键值的节点 id；}
+\PYG{c+cm}{         * 可通过使用第 k 大的方法去按照下标来获得 id 从而随机访问；}
+\PYG{c+cm}{         * 还可以通过维护关于键值的一些特定值，来进行关于键值的特定查找；}
+\PYG{c+cm}{         *}
+\PYG{c+cm}{         * 当在 APPEND 模式下，节点的 cnt 值毫无意义，始终为 1；}
+\PYG{c+cm}{         * 并不是不可以使用 cnt 维护连续的值相同的区间，主要是意义不大；}
+\PYG{c+cm}{         */}
+\PYG{c+cp}{\PYGZsh{}ifdef SPLAY\PYGZus{}APPEND\PYGZus{}MODE}
+        \PYG{k+kt}{void} \PYG{n}{append}\PYG{p}{(}\PYG{n}{T} \PYG{n}{key}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k}{if} \PYG{p}{(}\PYG{o}{!}\PYG{n}{root}\PYG{p}{)}
+            \PYG{p}{\PYGZob{}}
+                \PYG{n}{root} \PYG{o}{=} \PYG{n}{alloc}\PYG{p}{(}\PYG{n}{key}\PYG{p}{);}
+                \PYG{k}{return}\PYG{p}{;}
+            \PYG{p}{\PYGZcb{}}
+            \PYG{k+kt}{int} \PYG{n}{id} \PYG{o}{=} \PYG{n}{root}\PYG{p}{,} \PYG{n}{rs}\PYG{p}{;}
+            \PYG{k}{while} \PYG{p}{(}\PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{id}\PYG{p}{)}
+                \PYG{k}{if} \PYG{p}{(}\PYG{o}{!}\PYG{n}{rs}\PYG{p}{)} \PYG{k}{return} \PYG{n}{splay}\PYG{p}{(}\PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)} \PYG{o}{=} \PYG{n}{alloc}\PYG{p}{(}\PYG{n}{key}\PYG{p}{,} \PYG{n}{id}\PYG{p}{));}
+                \PYG{k}{else} \PYG{n}{id} \PYG{o}{=} \PYG{n}{rs}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{void} \PYG{n}{remove}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n}{splay}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}                      \PYG{c+c1}{// assert(id != 0)}
+            \PYG{k+kt}{int} \PYG{n}{ls} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}   \PYG{c+c1}{// 不要滥用引用！ ls/rs 在 id 后更新}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{cnt} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{1}\PYG{p}{)}
+                \PYG{k}{return} \PYG{o}{\PYGZhy{}\PYGZhy{}} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{cnt}\PYG{p}{,} \PYG{n}{update}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{size} \PYG{o}{==} \PYG{l+m+mi}{1}\PYG{p}{)}
+                \PYG{k}{return} \PYG{n}{root} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{free}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{if} \PYG{p}{(}\PYG{o}{!}\PYG{n}{ls} \PYG{o}{||} \PYG{o}{!}\PYG{n}{rs}\PYG{p}{)}
+                \PYG{k}{return} \PYG{n}{root} \PYG{o}{=} \PYG{n}{ls} \PYG{o}{|} \PYG{n}{rs}\PYG{p}{,} \PYG{n}{node}\PYG{p}{[}\PYG{n}{root}\PYG{p}{].}\PYG{n}{anc} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{free}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{n}{id} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{root}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{],} \PYG{n}{ls} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{while} \PYG{p}{(}\PYG{n}{rs}\PYG{p}{)} \PYG{n}{id} \PYG{o}{=} \PYG{n}{rs}\PYG{p}{,} \PYG{n}{ls} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{n}{splay}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{free}\PYG{p}{(}\PYG{n}{rs}\PYG{p}{);}            \PYG{c+c1}{// free 没有立即清空，所以可以先 free}
+            \PYG{n}{ls} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{rs} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}       \PYG{c+c1}{// 树的结构发生变化，应立即更新 ls， rs}
+            \PYG{n}{node}\PYG{p}{[}\PYG{n}{rc}\PYG{p}{(}\PYG{n}{rs}\PYG{p}{)].}\PYG{n}{anc} \PYG{o}{=} \PYG{n}{id}\PYG{p}{,} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)} \PYG{o}{=} \PYG{n}{node}\PYG{p}{[}\PYG{n}{rs}\PYG{p}{].}\PYG{n}{chd}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{];}
+            \PYG{n}{update}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{int} \PYG{n}{getLast}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n}{splay}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{id} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{while} \PYG{p}{(}\PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{))} \PYG{n}{id} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{return} \PYG{n}{id}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k+kt}{int} \PYG{n}{getNext}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{id}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n}{splay}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{id} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{while} \PYG{p}{(}\PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{))} \PYG{n}{id} \PYG{o}{=} \PYG{n}{lc}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{return} \PYG{n}{id}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{c+c1}{// 使用的时候应当保证插入虚节点作为哨兵（仅末尾}
+        \PYG{k+kt}{void} \PYG{n}{reverse}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{l}\PYG{p}{,} \PYG{k+kt}{int} \PYG{n}{r}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{l} \PYG{o}{\PYGZgt{}} \PYG{n}{r}\PYG{p}{)} \PYG{k}{return}\PYG{p}{;}
+            \PYG{k+kt}{int} \PYG{n}{id} \PYG{o}{=} \PYG{n}{atRank}\PYG{p}{(}\PYG{n}{r} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{);}
+            \PYG{n}{splay}\PYG{p}{(}\PYG{n}{id}\PYG{p}{),} \PYG{n}{splay}\PYG{p}{(}\PYG{n}{atRank}\PYG{p}{(}\PYG{n}{l} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{1}\PYG{p}{),} \PYG{n}{id}\PYG{p}{);}
+            \PYG{k+kt}{int} \PYG{n}{son} \PYG{o}{=} \PYG{n}{rc}\PYG{p}{(}\PYG{n}{lc}\PYG{p}{(}\PYG{n}{root}\PYG{p}{));}
+            \PYG{n}{node}\PYG{p}{[}\PYG{n}{son}\PYG{p}{].}\PYG{n}{rev} \PYG{o}{=} \PYG{o}{!}\PYG{n}{node}\PYG{p}{[}\PYG{n}{son}\PYG{p}{].}\PYG{n}{rev}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+\PYG{c+cp}{\PYGZsh{}endif}
+
+        \PYG{n}{T} \PYG{k}{operator} \PYG{p}{[](}\PYG{k+kt}{int} \PYG{n}{rank}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{k+kt}{int} \PYG{n}{id} \PYG{o}{=} \PYG{n}{atRank}\PYG{p}{(}\PYG{n}{rank}\PYG{p}{);}
+            \PYG{n}{splay}\PYG{p}{(}\PYG{n}{id}\PYG{p}{);}
+            \PYG{k}{return} \PYG{n}{node}\PYG{p}{[}\PYG{n}{id}\PYG{p}{].}\PYG{n}{key}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+
+        \PYG{k}{friend} \PYG{n}{ostream} \PYG{o}{\PYGZam{}}\PYG{k}{operator} \PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{p}{(}\PYG{n}{ostream} \PYG{o}{\PYGZam{}}\PYG{n}{os}\PYG{p}{,} \PYG{n}{tree} \PYG{o}{\PYGZam{}}\PYG{n}{me}\PYG{p}{)}
+        \PYG{p}{\PYGZob{}}
+            \PYG{n}{me}\PYG{p}{.}\PYG{n}{toStream}\PYG{p}{(}\PYG{n}{os}\PYG{p}{,} \PYG{n}{me}\PYG{p}{.}\PYG{n}{root}\PYG{p}{);}
+            \PYG{k}{return} \PYG{n}{os} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{n}{flush}\PYG{p}{;}
+        \PYG{p}{\PYGZcb{}}
+    \PYG{p}{\PYGZcb{};}
+
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

@@ -1,0 +1,25 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYG{c+cp}{\PYGZsh{}define DEBUG 1}
+
+\PYG{c+cp}{\PYGZsh{}if DEBUG}
+\PYG{c+cp}{\PYGZsh{}define eprintf(x...) fprintf(stderr, x)}
+\PYG{c+cp}{\PYGZsh{}define eputs(str) fputs(str, stderr), fputc(\PYGZsq{}\PYGZbs{}n\PYGZsq{}, stderr)}
+\PYG{c+cp}{\PYGZsh{}define var(x) \PYGZdq{}\PYGZdq{}\PYGZsh{}x\PYGZdq{} = \PYGZdq{} \PYGZlt{}\PYGZlt{} x}
+\PYG{c+cp}{\PYGZsh{}define watch(...) trace(\PYGZsh{}\PYGZus{}\PYGZus{}VA\PYGZus{}ARGS\PYGZus{}\PYGZus{}, \PYGZus{}\PYGZus{}VA\PYGZus{}ARGS\PYGZus{}\PYGZus{})}
+\PYG{c+cp}{\PYGZsh{}else}
+\PYG{c+cp}{\PYGZsh{}define eprintf(...)}
+\PYG{c+cp}{\PYGZsh{}define eputs(...)}
+\PYG{c+cp}{\PYGZsh{}define watch(...)}
+\PYG{c+cp}{\PYGZsh{}endif}
+
+\PYG{k}{template} \PYG{o}{\PYGZlt{}}\PYG{k}{class} \PYG{n+nc}{printable}\PYG{o}{\PYGZgt{}}
+\PYG{k+kt}{void} \PYG{n}{trace}\PYG{p}{(}\PYG{k}{const} \PYG{k+kt}{char} \PYG{o}{*}\PYG{n}{name}\PYG{p}{,} \PYG{n}{printable} \PYG{o}{\PYGZam{}\PYGZam{}}\PYG{n}{value}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}\PYG{n}{cerr} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{n}{name} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{l+s}{\PYGZdq{} = \PYGZdq{}} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{n}{value} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{n}{endl}\PYG{p}{;\PYGZcb{}}
+\PYG{k}{template} \PYG{o}{\PYGZlt{}}\PYG{k}{class} \PYG{n+nc}{printable}\PYG{p}{,} \PYG{k}{class} \PYG{p}{...}\PYG{n}{args}\PYG{o}{\PYGZgt{}}
+\PYG{k+kt}{void} \PYG{n}{trace}\PYG{p}{(}\PYG{k}{const} \PYG{k+kt}{char} \PYG{o}{*}\PYG{n}{names}\PYG{p}{,} \PYG{n}{printable} \PYG{o}{\PYGZam{}\PYGZam{}}\PYG{n}{value}\PYG{p}{,} \PYG{n}{args} \PYG{o}{\PYGZam{}\PYGZam{}}\PYG{p}{...}\PYG{n}{list}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+    \PYG{k}{const} \PYG{k+kt}{char} \PYG{o}{*}\PYG{n}{separate} \PYG{o}{=} \PYG{n}{strchr}\PYG{p}{(}\PYG{n}{names} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+s+sc}{\PYGZsq{},\PYGZsq{}}\PYG{p}{);}
+    \PYG{n}{cerr}\PYG{p}{.}\PYG{n}{write}\PYG{p}{(}\PYG{n}{names}\PYG{p}{,} \PYG{n}{separate} \PYG{o}{\PYGZhy{}} \PYG{n}{names}\PYG{p}{)} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{l+s}{\PYGZdq{} = \PYGZdq{}} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{n}{value} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{l+s+sc}{\PYGZsq{},\PYGZsq{}}\PYG{p}{;}
+    \PYG{n}{trace}\PYG{p}{(}\PYG{n}{separate} \PYG{o}{+} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{list}\PYG{p}{...);}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

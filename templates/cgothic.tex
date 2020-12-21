@@ -1,0 +1,217 @@
+\documentclass[titlepage, a4paper, 9pt]{article}
+\usepackage{euler}
+\usepackage{listings, color, fontspec, minted, setspace, titlesec, fancyhdr, dingbat, mdframed, multicol}
+\usepackage{graphicx, amssymb, amsmath, textcomp, booktabs}
+\usepackage{ucharclasses}
+\usepackage{xunicode, xltxtra}
+\usepackage[inner=1.35cm, outer=1cm, top=1.7cm, bottom=0.0cm]{geometry}
+\usepackage{pdfpages}
+\usepackage{tocloft}
+\usepackage{nameref}
+\usepackage{verbatim}
+%\usepackage{rotating}
+
+\XeTeXlinebreaklocale "zh"
+\XeTeXlinebreakskip = 0pt plus 1pt
+
+%% 配置页眉
+\pagestyle{fancy}
+\setlength{\headsep}{0.1cm}
+%\chead{Team : class.Asahi}
+\rhead{Page \thepage}
+\lhead{华中科技大学 Huazhong University of Science and Technology}
+ 
+%% 设置行间距
+\setlength{\columnsep}{13pt}
+
+%% 设置字体
+\setmonofont{Consolas}[Scale=0.775]
+\newfontfamily\substitutefont{SimHei}[Scale=0.8]
+\setTransitionsForChinese{\begingroup\substitutefont}{\endgroup}
+\newfontfamily\cgothic{Century Gothic}
+\newfontfamily\titleCJKfont{SimHei}[Scale=1.0]
+%\newfontfamily{\firaseries}{Fira Code}
+
+%% 移除目录表中的前置数字
+%\setcounter{secnumdepth}{0}	
+
+%% 配置目录表的分块样式
+\renewcommand\cftsecfont{\Large}
+
+%% 配置分块的格式
+\titleformat{\section}
+{\LARGE\titleCJKfont\cgothic}	% The style of the section title
+{\thesection.}					% a prefix
+{4pt}							% How much space exists between the prefix and the title
+{}								% How the section is represented
+\titleformat{\subsection}
+{\titleCJKfont\cgothic}{\thesubsection}{2pt}{}
+\titleformat{\subsubsection}
+{\titleCJKfont\cgothic}{\thesubsubsection}{2pt}{}
+\titlespacing{\section}{0pt}{1pt}{0pt}
+\titlespacing{\subsection}{0pt}{0pt}{0pt}
+\titlespacing{\subsubsection}{0pt}{0pt}{0pt}
+
+%% 每一个分区自动成为新的一页
+%\let\stdsection\section
+%\renewcommand\section{\penalty-100\vfilneg\stdsection}
+
+%\renewcommand\theFancyVerbLine{\arabic{FancyVerbLine}}
+\renewcommand{\theFancyVerbLine}{\sffamily \textcolor[rgb]{0.5,0.5,0.5}{\scriptsize {\arabic{FancyVerbLine}}}}
+
+%% 配置代码高亮
+\setminted[cpp]{
+	style=xcode,
+	mathescape,
+	linenos,
+	autogobble,
+	baselinestretch=0.9,
+	tabsize=3,
+	fontsize=\normalsize,
+	frame=single,
+	framesep=1mm,
+	framerule=0.3pt,
+	numbersep=1mm,
+	breaklines=true,
+	breaksymbolsepleft=2pt,
+	breakbytoken=false,
+	showtabs=true,
+	tab=$\mathbb{|}\ \ \ $,
+}
+\setminted[java]{
+	style=xcode,
+	mathescape,
+	linenos,
+	autogobble,
+	baselinestretch=0.9,
+	tabsize=2,
+	frame=single,
+	framesep=1mm,
+	framerule=0.3pt,
+	numbersep=1mm,
+	breaklines=true,
+	breaksymbolsepleft=2pt,
+	breakbytoken=false,
+	showtabs=true,
+	tab=$\mathbb{|}\ \ \ $,
+}
+\setminted[python]{
+	style=xcode,
+	mathescape,
+	linenos,
+	autogobble,
+	baselinestretch=0.9,
+	tabsize=3,
+	fontsize=\normalsize,
+	frame=single,
+	framesep=1mm,
+	framerule=0.3pt,
+	numbersep=1mm,
+	breaklines=true,
+	breaksymbolsepleft=2pt,
+	breakbytoken=false,
+	showtabs=true,
+	tab=$\mathbb{|}\ \ \ $,
+}
+
+\setminted[vim]{
+	style=xcode,
+	mathescape,
+	linenos,
+	autogobble,
+	baselinestretch=0.9,
+	tabsize=2,
+	fontsize=\normalsize,
+	frame=single,
+	framesep=1mm,
+	framerule=0.3pt,
+	numbersep=1mm,
+	breaklines=true,
+	breaksymbolsepleft=2pt,
+	breakbytoken=false,
+}
+
+\setminted[sh]{
+	style=xcode,
+	mathescape,
+	linenos,
+	autogobble,
+	baselinestretch=0.9,
+	tabsize=2,
+	fontsize=\normalsize,
+	frame=single,
+	framesep=1mm,
+	framerule=0.3pt,
+	numbersep=1mm,
+	breaklines=true,
+	breaksymbolsepleft=2pt,
+	breakbytoken=false,
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%                                  文档开始
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+	\begin{titlepage}
+		\includepdf{modules/cover/cover.pdf}
+		\newpage
+	\end{titlepage}
+	\begin{multicols}{2}
+		\setcounter{tocdepth}{2}
+		\begingroup
+		\let\cleardoublepage\relax
+		\let\clearpage\relax
+		\tableofcontents
+		\newpage
+        \begin{spacing}{0.6}
+            
+			\section{Geometry}
+				\subsection{二维坐标}
+				\inputminted{cpp}{src/Geometry/二维坐标.cpp}
+				\subsection{相关公式}
+                \input{src/Geometry/相关公式.tex}
+                
+            \section{Data Structure}
+                \subsection{链式前向星}
+                \inputminted{cpp}{src/DataStructure/链式前向星.cpp}
+                \subsection{简单 Splay 树}
+                \inputminted{cpp}{src/DataStructure/简单 Splay 树.cpp}
+
+            \section{Language}
+                \subsection{Java InputReader}
+                \inputminted{cpp}{src/Language/InputReader.java}
+                \subsection{C++ Scanner}
+                \inputminted{cpp}{src/Language/Scanner.cpp}    
+                \subsection{C++ Watch}
+                \inputminted{cpp}{src/Language/Watch.cpp}
+			
+			\section{Miscellany}
+				\subsection{Zeller 日期公式}
+				\inputminted{cpp}{src/Miscellany/Zeller 日期公式.cpp}
+				\subsection{SPFA}
+				\inputminted{cpp}{src/Miscellany/SPFA.cpp}
+			
+			\section{Appendix}
+				\begin{spacing}{0.5}
+				\subsection{Formulas 公式表}
+				\input{src/Appendix/Formula.tex}
+				\subsection{Calculus Table 导数表}
+				\input{src/Appendix/CalculusTable.tex}
+				\subsection{Integration Table 积分表}
+				\input{src/Appendix/IntegrationTable_NewMeta.tex}
+				\subsection{Constant Table 常数表}
+				\input{src/Appendix/Addon.tex}
+				\end{spacing}
+
+		\end{spacing}
+		\endgroup
+	\end{multicols}
+	
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%                                  文档结束
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
