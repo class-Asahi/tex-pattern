@@ -3,6 +3,7 @@
 *.synctex.gz
 *.aux
 *.toc
+_minted-main
 
 # Exclude path
 !modules/cover/favicon.pdf
